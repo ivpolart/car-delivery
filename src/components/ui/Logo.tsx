@@ -2,38 +2,45 @@ import { useEffect, useState } from "react";
 import logo from "@/assets/logo-01.svg";
 
 export default function Logo() {
-    const message = "Delivery";
-    const [text, setText] = useState("");
+
+    const texts = ["Fast", "Reliable", "Delivery"];
+    const [wordIndex, setWordIndex] = useState(0);
+    const [charIndex, setCharIndex] = useState(0);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
-        let index = 0;
-        let isDeleting = false;
+        const interval = setTimeout(() => {
+            if(!isDeleting) {
 
-        const interval = setInterval(() => {
-            if (!isDeleting) {
-                index++;
-                setText(message.slice(0, index));
+                if(charIndex === texts[wordIndex].length) {
 
-                if (index === message.length) {
-                    isDeleting = true;
+                    if(wordIndex !== texts.length - 1) {
+                        setIsDeleting(true);
+                    }
+                } else {
+                    setCharIndex(prev => prev + 1);
                 }
-            } else {
-                index--;
-                setText(message.slice(0, index));
+            }
+            else {
+                // texts[wordIndex].slice(0, charIndex);
 
-                if (index === 0) {
-                    isDeleting = false;
+                if(charIndex === 0) {
+                    setIsDeleting(false);
+                    setWordIndex(prev => prev + 1);
+                } else {
+                    setCharIndex(prev => prev - 1);
                 }
             }
         }, 100);
 
-        return () => clearInterval(interval);
-    }, []);
+        return () => clearTimeout(interval); 
+
+    }, [charIndex , isDeleting, wordIndex]);
 
     return (
         <>
-            <img src={logo} alt="Logo" />
-            <div>Car{text}<span className="cursor">|</span></div>
+            <img className="w-2/5" src={logo} alt="Logo" />
+            <span className="w-3/5">Car<mark>{texts[wordIndex].slice(0, charIndex)}</mark><span className="cursor">|</span></span>
         </>
     );
 }
