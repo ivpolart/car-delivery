@@ -10,7 +10,7 @@ export default function Header() {
 
 
   return (
-    <header className="border-b">
+    <header className="sticky border-b">
       <Container className="flex h-20 items-center justify-between">
         <Link to="/" className="flex items-center gap-3 w-[300px]">
           <Logo />
@@ -18,21 +18,22 @@ export default function Header() {
         <button className="lg:hidden" onClick={() => setIsMenuOpen(prev => !prev)}>
           {isMenuOpen ? "✕" : "☰"}
         </button>
-        {isMenuOpen && (
-        <nav className="lg:flex gap-6">
+        <nav className={isMenuOpen ? "bg-white p-[20px] absolute left-0 top-(--header-height) w-full flex flex-col gap-6" : "hidden lg:flex gap-6"}>
             <NavLink
             to="/"
             className={({ isActive }) =>
                 isActive ? "text-blue-600 font-semibold" : ""
             }
+            onClick={() => setIsMenuOpen(false)}
             >
             Home
             </NavLink>
             <NavLink
             to="/catalog"
             className={({ isActive }) =>
-                isActive ? "text-blue-600 font-semibold" : ""
+                isActive ? "text-blue-600 font-semibold" : "" 
             }
+            onClick={() => setIsMenuOpen(false)}
             >
             Catalog
             </NavLink>
@@ -41,6 +42,7 @@ export default function Header() {
             className={({ isActive }) =>
                 isActive ? "text-blue-600 font-semibold" : ""
             }
+            onClick={() => setIsMenuOpen(false)}
             >
             About
             </NavLink>
@@ -49,11 +51,11 @@ export default function Header() {
             className={({ isActive }) =>
                 isActive ? "text-blue-600 font-semibold" : ""
             }
+            onClick={() => setIsMenuOpen(false)}
             >
             Contacts
             </NavLink>
         </nav>
-        )}
       </Container>
     </header>
   );
