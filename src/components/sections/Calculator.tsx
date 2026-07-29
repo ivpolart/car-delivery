@@ -1,11 +1,118 @@
+import { useState } from "react";
 import Container from "@/components/ui/Container";
 import Title from "@/components/ui/Title"
+
+type EngineType = "gas" | "diesel" | "hybrid" | "electric";
+
+interface CalculatorData {
+    price: number;
+    year: number;
+    engineType: EngineType;
+    engineCapacity: number;
+    brokerFee: number;
+}
 
 export default function Calculator() {
     const currentYear = new Date().getFullYear();
     const years = Array.from(
         { length: currentYear - 1999 },
         (_, index) => currentYear - index        
+    );
+
+    const engineTypes = ["gas", "diesel", "hybrid", "electric"] as const;
+    const engineCapacities = ["1.2", "1.6", "1.8", "2.0", "2.5", "3.0", "3.5"] as const;
+
+    const [calculator, setCalculator] = useState<CalculatorData>({
+        price: 0,
+        year: currentYear,
+        engineType: "gas",
+        engineCapacity: 2.0,
+        brokerFee: 250
+    });
+
+    function handleChange<K extends keyof CalculatorData>(key: K, value: CalculatorData[K]) {
+        setCalculator(prev => ({
+            ...prev, 
+            [key]: value
+        }));
+    }
+
+
+    function calculateImportDuty(price: number) {
+        return price * 0.1;
+    }
+    function calculateExcise(
+        year: number,
+        engineType: EngineType,
+        engineCapacity: number
+    ) {
+        
+        if(engineType === 'electric') {
+            return 0
+        }
+
+        const baseRate:number = engineType === 'diesel' ? 70 : 50
+        const age = Math.max(1, currentYear - year);
+
+        return baseRate * engineCapacity * age;
+    }
+    function calculateVat(
+        price: number,
+        importDuty: number,
+        excise: number
+    ) {
+        return (price + importDuty + excise) * 0.20;
+    }
+    function calculatePensionFee(pensionFeeValue: number) {
+        if(pensionFeeValue < 12200) {
+            return pensionFeeValue * 0.03
+        }
+        
+        if(pensionFeeValue > 12200 && pensionFeeValue < 21550) {
+            return pensionFeeValue * 0.04
+        }
+
+        return pensionFeeValue * 0.5;
+
+    }
+    function calculateRegistration() {
+        return 1300;
+    }
+    function calculateTotal(
+        price: number,
+        importDuty: number,
+        excise: number,
+        vat: number,
+        pensionFee: number,
+        registration: number,
+        brokerFee: number
+    ) {
+        return price + importDuty + excise + vat + pensionFee + registration + brokerFee;
+    }
+
+    const importDuty = calculateImportDuty(calculator.price);
+    const excise = calculateExcise(
+        calculator.year,
+        calculator.engineType,
+        calculator.engineCapacity
+    );
+    const vat = calculateVat(
+        calculator.price,
+        importDuty,
+        excise
+    );
+    const pensionFee = calculatePensionFee(
+        calculator.price + importDuty + excise + vat
+    );
+    const registration = calculateRegistration();
+    const total = calculateTotal(
+        calculator.price,
+        importDuty,
+        excise,
+        vat,
+        pensionFee,
+        registration,
+        calculator.brokerFee
     );
     
     return(
@@ -19,7 +126,9 @@ export default function Calculator() {
                     <form className="w-1/2" action="">
                         <fieldset className="row">
                             <label htmlFor="car-year">Year</label>
-                            <select name="select-year" id="">
+                            <select name="select-year" value={calculator.year} onChange={(event) => {
+                                handleChange("year", Number((event.target.value)))
+                            }}>
                                 {years.map((year) => (
                                      <option key={year} value={year}>
                                         {year}
@@ -29,78 +138,60 @@ export default function Calculator() {
                         </fieldset>
                         <fieldset className="row flex flex-wrap gap-4">
                             <legend className="w-full">Engine Type</legend>
-                            <div>
-                                <input type="radio" id="gas" name="engine_type" value="Gas" checked />
-                                <label htmlFor="gas">Gas</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="diesel" name="engine_type" value="Diesel" checked />
-                                <label htmlFor="diesel">Diesel</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="electric" name="engine_type" value="Electric" checked />
-                                <label htmlFor="electric">Electric</label>
-                            </div>
+                                {engineTypes.map((type) => (
+                                    <div key={type}>
+                                        <input type="radio" id={type} name="engine_type" value={type} checked={calculator.engineType === type} onChange={() => {
+                                            handleChange("engineType", type)
+                                        }} /> 
+                                        <label htmlFor={type}>{type}</label>
+                                    </div>
+                                ))}
                         </fieldset>
                         <fieldset className="row flex flex-wrap gap-4">
                             <legend className="w-full">Engine Capacity</legend>
-                            <div>
-                                <input type="radio" name="engine_capacity" value="1.2" checked />
-                                <label htmlFor="1.2">1.2</label>
-                            </div>
-                            <div>
-                                <input type="radio" name="engine_capacity" value="1.6" checked />
-                                <label htmlFor="1.6">1.6</label>
-                            </div>
-                            <div>
-                                <input type="radio" name="engine_capacity" value="1.8" checked />
-                                <label htmlFor="1.8">1.8</label>
-                            </div>
-                            <div>
-                                <input type="radio" name="engine_capacity" value="2.0" checked />
-                                <label htmlFor="2.0">2.0</label>
-                            </div>
-                            <div>
-                                <input type="radio" name="engine_capacity" value="2.5" checked />
-                                <label htmlFor="2.5">2.5</label>
-                            </div>
-                            <div>
-                                <input type="radio" name="engine_capacity" value="3.0" checked />
-                                <label htmlFor="3.0">3.0</label>
-                            </div>
-                            <div>
-                                <input type="radio" name="engine_capacity" value="3.5" checked />
-                                <label htmlFor="3.5">3.5</label>
-                            </div>
+                                {engineCapacities.map((capacity) => (
+                                    <div key={capacity}>
+                                        <input id={capacity} type="radio" name="engine_capacity" value={capacity} checked={calculator.engineCapacity === Number(capacity)}  onChange={() => {
+                                            handleChange("engineCapacity", Number(capacity))
+                                        }} /> 
+                                        <label htmlFor={capacity}>{capacity}</label>
+                                    </div>
+                                ))}
                         </fieldset>
                         <fieldset className="row">
                             <label htmlFor="price">Price</label>
-                            <input type="number" name="price"/>
+                            <input type="number" name="price" value={calculator.price === 0 ? "" : calculator.price} onChange={(event) => {
+                                const price = Number(event.target.value);
+                                handleChange("price", price)
+                            }}/>
                         </fieldset>
                     </form>
                     <div className="result w-1/2">
                         <ul className="payments-list">
                             <li>
-                                <div>IMPORT DUTY</div>
+                                <div>IMPORT DUTY: {importDuty}</div>
                                 <div>Tax for importing a car into the territory of Ukraine.</div>
                             </li>
                             <li>
-                                <div>EXCISE</div>
+                                <div>EXCISE: {excise}</div>
                                 <div>A fee that depends on the type of engine and volume.</div>
                             </li>
                             <li>
-                                <div>VAT</div>
+                                <div>VAT: {vat}</div>
                                 <div>Value added tax charged upon import.</div>
                             </li>
                             <li>
-                                <div>PENSION FEE</div>
+                                <div>PENSION FEE: {pensionFee}</div>
                                 <div>Mandatory payment during the first registration of a car.</div>
                             </li>
                              <li>
-                                <div>REGISTRATION</div>
+                                <div>REGISTRATION: {registration}</div>
                                 <div>Payment for car registration and paperwork.</div>
                             </li>
                         </ul>
+                        <div>
+                            <p>Full cost car: {total}</p>
+                        </div>
                     </div>
                 </div>
             </Container>
