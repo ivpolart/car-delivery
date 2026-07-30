@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap');
+
+:root {
+  --header-height: 81px;
+}
+
+body {
+    font: 400 18px/1.5 "Play", "Arial", sans-serif;
+}
+
+mark {
+    background: none;
+    color: #e68b02;
+}
+
+.logo {
+    font-size: 30px;
+}
+
+header nav a {
+    font-size: 18px;
+}
+
+header nav a.active {
+    font-weight: 700;
+    color: #e68b02;
+}
