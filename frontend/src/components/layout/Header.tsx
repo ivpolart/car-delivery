@@ -10,7 +10,7 @@ export default function Header() {
 
 
   return (
-    <header className="sticky">
+    <header className="bg-white sticky left-0 top-0 z-99">
       <Container className="flex h-20 items-center justify-between">
         <Link to="/" className="logo flex items-center gap-3 w-[300px]">
           <Logo />
@@ -18,7 +18,7 @@ export default function Header() {
         <button className="lg:hidden" onClick={() => setIsMenuOpen(prev => !prev)}>
           {isMenuOpen ? "✕" : "☰"}
         </button>
-        <nav className={isMenuOpen ? "bg-white p-[20px] absolute left-0 top-(--header-height) w-full flex flex-col gap-6" : "hidden lg:flex gap-6"}>
+        <nav className={isMenuOpen ? "p-[20px] absolute left-0 top-(--header-height) w-full flex flex-col gap-6 z-99" : "hidden lg:flex gap-6"}>
             <NavLink
             to="/"
             className={({ isActive }) =>

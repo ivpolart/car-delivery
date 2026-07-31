@@ -122,75 +122,89 @@ export default function Calculator() {
                     title="COST CALCULATOR"
                     subtitle="Calculate the delivery of your car"
                 />
-                <div className="calculator-wrapper w-full lg:flex lg:gap-10">
-                    <form className="w-1/2 bg-[radial-gradient(50%_50%_at_50%_50%,#2D2B2B_0%,#1B1A1A_100%)] rounded-lg p-10 text-white" action="">
-                        <fieldset className="row mb-7">
-                            <label htmlFor="car-year">Year</label>
-                            <select name="select-year" value={calculator.year} onChange={(event) => {
+                <div className="calculator-wrapper flex flex-col max-sm:items-center gap-10 justify-center lg:flex lg:flex-row ">
+                    <form className="lg:w-1/2 bg-[radial-gradient(50%_50%_at_50%_50%,#2D2B2B_0%,#1B1A1A_100%)] rounded-lg lg:p-10 p-5 text-white flex flex-col grow" action="">
+                        <fieldset className="flex flex-col row mb-7">
+                            <label className="block mb-2" htmlFor="car-year">Year</label>
+                            <select className="bg-[#2D2B2B] text-white p-4 rounded-lg appearance-none" name="select-year" value={calculator.year} onChange={(event) => {
                                 handleChange("year", Number((event.target.value)))
                             }}>
                                 {years.map((year) => (
-                                     <option key={year} value={year}>
+                                     <option className="p-4" key={year} value={year}>
                                         {year}
                                     </option>
                                 ))}
                             </select>
                         </fieldset>
-                        <fieldset className="row flex flex-wrap gap-4 mb-7">
-                            <legend className="w-full">Engine Type</legend>
+                        <fieldset className="row flex flex-wrap gap-5 mb-7">
+                            <legend className="w-full mb-5">Engine Type</legend>
                                 {engineTypes.map((type) => (
-                                    <div key={type}>
+                                    <div className="relative" key={type}>
                                         <input type="radio" id={type} name="engine_type" value={type} checked={calculator.engineType === type} onChange={() => {
                                             handleChange("engineType", type)
-                                        }} /> 
-                                        <label htmlFor={type}>{type}</label>
+                                        }}
+                                        className="appearance-none absolute"
+                                        /> 
+                                        <label htmlFor={type} className={`cursor-pointer rounded-lg p-3 transition
+                                            ${calculator.engineType === type
+                                                ? "bg-orange-500"
+                                                : "bg-[#2D2B2B]"
+                                            }`}>{type}
+                                        </label>
                                     </div>
                                 ))}
                         </fieldset>
-                        <fieldset className="row flex flex-wrap gap-4 mb-7">
-                            <legend className="w-full">Engine Capacity</legend>
+                        <fieldset className="row flex flex-wrap gap-5 mb-7 grow">
+                            <legend className="w-full mb-5">Engine Capacity</legend>
                                 {engineCapacities.map((capacity) => (
-                                    <div key={capacity}>
+                                    <div className="relative" key={capacity}>
                                         <input id={capacity} type="radio" name="engine_capacity" value={capacity} checked={calculator.engineCapacity === Number(capacity)}  onChange={() => {
                                             handleChange("engineCapacity", Number(capacity))
-                                        }} /> 
-                                        <label htmlFor={capacity}>{capacity}</label>
+                                        }} 
+                                        className="appearance-none absolute"
+                                        /> 
+                                        <label htmlFor={capacity} className={`cursor-pointer rounded-lg p-3 transition
+                                            ${calculator.engineCapacity === Number(capacity)
+                                                ? "bg-orange-500"
+                                                : "bg-[#2D2B2B]"
+                                            }`}>{capacity}
+                                        </label>
                                     </div>
                                 ))}
                         </fieldset>
-                        <fieldset className="row mb-7">
-                            <label htmlFor="price">Price</label>
-                            <input type="number" name="price" value={calculator.price === 0 ? "" : calculator.price} onChange={(event) => {
+                        <fieldset className="row mb-7 w-full">
+                            <label className="block mb-2" htmlFor="price">Price</label>
+                            <input className="bg-[#2D2B2B] text-white p-4 w-full rounded-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" name="price" value={calculator.price === 0 ? "" : calculator.price} onChange={(event) => {
                                 const price = Number(event.target.value);
                                 handleChange("price", price)
                             }}/>
                         </fieldset>
                     </form>
-                    <div className="result bg-[radial-gradient(50%_50%_at_50%_50%,#FF7904_0%,#B25009_100%)] rounded-lg p-10 w-1/2">
-                        <ul className="payments-list">
-                            <li>
-                                <div>IMPORT DUTY: {importDuty}</div>
+                    <div className="result lg:w-1/2">
+                        <ul className="payments-list bg-[radial-gradient(50%_50%_at_50%_50%,#FF7904_0%,#B25009_100%)] rounded-lg lg:p-10 p-5 mb-5">
+                            <li className="pb-3 mb-3 border-b border-color-black">
+                                <div className="text-2xl font-bold uppercase">IMPORT DUTY: {importDuty}$</div>
                                 <div>Tax for importing a car into the territory of Ukraine.</div>
                             </li>
-                            <li>
-                                <div>EXCISE: {excise}</div>
+                            <li className="pb-3 mb-3 border-b border-color-black">
+                                <div className="text-2xl font-bold uppercase">EXCISE: {excise}$</div>
                                 <div>A fee that depends on the type of engine and volume.</div>
                             </li>
-                            <li>
-                                <div>VAT: {vat}</div>
+                            <li className="pb-3 mb-3 border-b border-color-black">
+                                <div className="text-2xl font-bold uppercase">VAT: {vat}$</div>
                                 <div>Value added tax charged upon import.</div>
                             </li>
-                            <li>
-                                <div>PENSION FEE: {pensionFee}</div>
+                            <li className="pb-3 mb-3 border-b border-color-black">
+                                <div className="text-2xl font-bold uppercase">PENSION FEE: {pensionFee}$</div>
                                 <div>Mandatory payment during the first registration of a car.</div>
                             </li>
                              <li>
-                                <div>REGISTRATION: {registration}</div>
+                                <div className="text-2xl font-bold uppercase">REGISTRATION: {registration}$</div>
                                 <div>Payment for car registration and paperwork.</div>
                             </li>
                         </ul>
-                        <div>
-                            <p>Full cost car: {total}</p>
+                        <div className="bg-[radial-gradient(50%_50%_at_50%_50%,#FF7904_0%,#B25009_100%)] rounded-lg p-10">
+                            <p className="text-2xl font-bold uppercase">Full cost car: {total}$</p>
                         </div>
                     </div>
                 </div>
