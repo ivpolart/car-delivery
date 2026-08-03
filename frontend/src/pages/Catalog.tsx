@@ -1,3 +1,11 @@
+import Hero from "@/components/sections/Hero";
+import CatalogGrid from "@/components/sections/CatalogGrid";
+
 export default function Catalog() {
-    return <h1>Catalog</h1>;
+    return (
+        <>
+            <Hero/>
+            <CatalogGrid/>
+        </>
+    );
 }
